@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" th:href="@{/qinjiang/css/qinstyle.css}">
+</head>
+<body>
+<div class="ui container">
+    <h2 class="ui dividing header">注册页面</h2>
+
+    <form class="ui form" method="post" th:action="@{/register}">
+        <div class="field">
+            <label>用户名</label>
+            <input type="text" name="account" placeholder="请输入用户名" required>
+        </div>
+        <div class="field">
+            <label>密码</label>
+            <input type="password" name="password" placeholder="请输入密码" required>
+        </div>
+        <button class="ui primary button" type="submit">注册</button>
+    </form>
+
+    <div style="margin-top:20px;">
+        已有账号？<a th:href="@{/toLogin}">去登录</a>
+    </div>
+</div>
+</body>
+</html>
