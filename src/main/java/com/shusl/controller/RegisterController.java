@@ -47,6 +47,7 @@ public class RegisterController {
         );
 
         // 注册成功，重定向到登录页面
-        return "redirect:/toLogin";
+        return "redirect:/toLogin?account=" + account;
+
     }
 }

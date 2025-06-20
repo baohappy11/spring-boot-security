@@ -14,10 +14,10 @@ public class RouterController {
         return "index";
     }
 
-    @RequestMapping("/toLogin")
-    public String toLogin(){
-        return "views/login";
-    }
+//    @RequestMapping("/toLogin")
+//    public String toLogin(){
+//        return "views/login";
+//    }
     //注销
 //    @RequestMapping("/logout")
 //    public String logout(){

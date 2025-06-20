@@ -49,8 +49,13 @@
     <!-- 表单提交到 /login，用户名字段名为 user，密码字段名为 pwd -->
     <form class="ui form" th:action="@{/login}" method="post">
         <div class="field">
+            <!-- 可选：显示欢迎语 -->
+            <div th:if="${param.account}" class="ui info message">
+                欢迎您，<span th:text="${param.account}"></span>，请登录。
+            </div>
             <label><i class="user icon"></i> 用户名</label>
-            <input type="text" name="user" placeholder="请输入用户名" required>
+            <input type="text" name="user" placeholder="请输入账号"
+                   th:value="${param.account}" required>
         </div>
         <div class="field">
             <label><i class="lock icon"></i> 密码</label>
@@ -68,6 +73,7 @@
             <button class="ui primary button" type="submit"><i class="sign-in icon"></i> 登录</button>
             <a class="ui button" th:href="@{/toRegister}"><i class="user plus icon"></i> 去注册</a>
         </div>
+
     </form>
 
     <!-- 错误提示 -->
