@@ -2,7 +2,9 @@ package com.shusl.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -11,30 +13,40 @@ public class RegisterController {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    // 访问注册页面
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
+
+    // 跳转到注册页面
     @GetMapping("/toRegister")
     public String toRegister() {
-        return "register";
+        return "register"; // 对应 register.html
     }
 
     // 提交注册请求
     @PostMapping("/register")
     public String doRegister(@RequestParam("account") String account,
-                             @RequestParam("password") String password) {
+                             @RequestParam("password") String password,
+                             Model model) {
 
-        // 检查用户是否已存在
+        // 查询用户是否存在
         Integer count = jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM user WHERE account = ?", Integer.class, account);
+                "SELECT COUNT(*) FROM users WHERE account = ?", Integer.class, account);
 
         if (count != null && count > 0) {
-            // 用户已存在，返回注册页（这里简化处理，你也可以给出提示）
-            return "redirect:/toRegister?error=exist";
+            model.addAttribute("error", "该账号已存在，请更换账号！");
+            return "register"; // 返回注册页面并展示错误
         }
 
-        // 存入数据库（明文密码）
-        jdbcTemplate.update("INSERT INTO user(account, password) VALUES (?, ?)", account, password);
+        // 加密密码
+        String encodedPassword = passwordEncoder.encode(password);
 
-        // 注册成功后跳转到登录页面
+        // 插入用户信息，默认角色为 ROLE_VIP0
+        jdbcTemplate.update(
+                "INSERT INTO users(account, password, role) VALUES (?, ?, ?)",
+                account, encodedPassword, "ROLE_VIP0"
+        );
+
+        // 注册成功，重定向到登录页面
         return "redirect:/toLogin";
     }
 }

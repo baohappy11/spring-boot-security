@@ -1,118 +1,137 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>首页</title>
-    <!--semantic-ui-->
-    <link href="https://cdn.bootcss.com/semantic-ui/2.4.1/semantic.min.css" rel="stylesheet">
-    <link th:href="@{/qinjiang/css/qinstyle.css}" rel="stylesheet">
+    <title>权限首页</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Semantic UI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #dfe9f3, #ffffff);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .logout-form {
+            display: inline;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item span {
+            margin-left: 5px;
+        }
+
+        .role-header {
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        a.ui.basic.button {
+            width: 100%;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
 
-<!--主容器-->
-<div class="ui container">
+<div class="ui container main-container">
 
-    <div class="ui segment" id="index-header-nav" th:fragment="nav-menu">
-        <div class="ui secondary menu">
-            <a class="item"  th:href="@{/index}">首页</a>
+    <!-- 顶部导航 -->
+    <div class="ui secondary pointing menu" th:fragment="nav-menu">
 
-            <!--登录注销-->
-            <div class="right menu">
-               <!--如果未登录-->
-                <div sec:authorize="!isAuthenticated()">
-                    <a class="item" th:href="@{/toLogin}">
-                        <i class="address card icon"></i> 登录
-                    </a>
-                </div>
+        <a class="item" th:href="@{/index}">
+            <i class="home icon"></i> 首页
+        </a>
 
-
-                <!--如果已经登录，显示用户名和注销按钮-->
-                <div sec:authorize="isAuthenticated()">
-                    <a class="item">
-                        用户名:<span sec:authentication="name"></span> 已登录
-                        角色:<span sec:authentication="principal.authorities"></span>
-                        </a>
-                    </div>
-                <div sec:authorize="isAuthenticated()">
-
-                    <!--注销-->
-                    <!-- 注销按钮改为POST -->
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <button class="ui item" style="background:none;border:none;cursor:pointer;">
-                            <i class="sign-out icon"></i> 注销
-                        </button>
-                    </form>
-                </div>
-
-                <!--已登录
-                <a th:href="@{/usr/toUserCenter}">
-                    <i class="address card icon"></i> admin
+        <div class="right menu">
+            <!-- 未登录 -->
+            <div sec:authorize="!isAuthenticated()">
+                <a class="item" th:href="@{/toLogin}">
+                    <i class="sign-in icon"></i> 登录
                 </a>
-                -->
+            </div>
+
+            <!-- 已登录 -->
+            <div sec:authorize="isAuthenticated()" class="item nav-item">
+                <i class="user icon"></i>
+                <span th:text="'用户名: ' + ${#authentication.name}"></span>
+                <span th:text="' | 角色: ' + ${#authentication.authorities}"></span>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="item">
+                <form class="logout-form" th:action="@{/logout}" method="post">
+                    <button class="ui red basic button" type="submit">
+                        <i class="sign-out icon"></i> 注销
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <div class="ui segment" style="text-align: center">
-        <h3>Spring Security Study by 秦疆</h3>
+    <!-- 标题 -->
+    <div class="ui center aligned raised segment">
+        <h2>Spring Security 权限演示</h2>
+        <p>以下功能根据角色动态展示</p>
     </div>
 
-    <div>
-        <br>
-        <div class="ui three column stackable grid">
-            <!--菜单根据用户的角色动态展现-->
-            <div class="column" sec:authorize="hasRole('VIP1')">
-                <div class="ui raised segment">
-                    <div class="ui">
-                        <div class="content">
-                            <h5 class="content">Level 1</h5>
-                            <hr>
-                            <div><a th:href="@{/level1/1}"><i class="bullhorn icon"></i> Level-1-1</a></div>
-                            <div><a th:href="@{/level1/2}"><i class="bullhorn icon"></i> Level-1-2</a></div>
-                            <div><a th:href="@{/level1/3}"><i class="bullhorn icon"></i> Level-1-3</a></div>
-                        </div>
-                    </div>
+    <!-- 三栏功能区域 -->
+    <div class="ui three stackable cards">
+
+        <!-- VIP1 功能 -->
+        <div class="card" sec:authorize="hasRole('VIP1')">
+            <div class="content">
+                <div class="role-header">Level 1 权限</div>
+                <div class="ui buttons vertical fluid">
+                    <a class="ui basic button" th:href="@{/level1/1}">Level-1-1</a>
+                    <a class="ui basic button" th:href="@{/level1/2}">Level-1-2</a>
+                    <a class="ui basic button" th:href="@{/level1/3}">Level-1-3</a>
                 </div>
             </div>
-
-            <div class="column" sec:authorize="hasRole('VIP2')">
-                <div class="ui raised segment">
-                    <div class="ui">
-                        <div class="content">
-                            <h5 class="content">Level 2</h5>
-                            <hr>
-                            <div><a th:href="@{/level2/1}"><i class="bullhorn icon"></i> Level-2-1</a></div>
-                            <div><a th:href="@{/level2/2}"><i class="bullhorn icon"></i> Level-2-2</a></div>
-                            <div><a th:href="@{/level2/3}"><i class="bullhorn icon"></i> Level-2-3</a></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="column" sec:authorize="hasRole('VIP3')">
-                <div class="ui raised segment">
-                    <div class="ui">
-                        <div class="content">
-                            <h5 class="content">Level 3</h5>
-                            <hr>
-                            <div><a th:href="@{/level3/1}"><i class="bullhorn icon"></i> Level-3-1</a></div>
-                            <div><a th:href="@{/level3/2}"><i class="bullhorn icon"></i> Level-3-2</a></div>
-                            <div><a th:href="@{/level3/3}"><i class="bullhorn icon"></i> Level-3-3</a></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
+
+        <!-- VIP2 功能 -->
+        <div class="card" sec:authorize="hasRole('VIP2')">
+            <div class="content">
+                <div class="role-header">Level 2 权限</div>
+                <div class="ui buttons vertical fluid">
+                    <a class="ui basic button" th:href="@{/level2/1}">Level-2-1</a>
+                    <a class="ui basic button" th:href="@{/level2/2}">Level-2-2</a>
+                    <a class="ui basic button" th:href="@{/level2/3}">Level-2-3</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIP3 功能 -->
+        <div class="card" sec:authorize="hasRole('VIP3')">
+            <div class="content">
+                <div class="role-header">Level 3 权限</div>
+                <div class="ui buttons vertical fluid">
+                    <a class="ui basic button" th:href="@{/level3/1}">Level-3-1</a>
+                    <a class="ui basic button" th:href="@{/level3/2}">Level-3-2</a>
+                    <a class="ui basic button" th:href="@{/level3/3}">Level-3-3</a>
+                </div>
+            </div>
+        </div>
+
     </div>
-    
 </div>
 
-
-<script th:src="@{/qinjiang/js/jquery-3.1.1.min.js}"></script>
-<script th:src="@{/qinjiang/js/semantic.min.js}"></script>
+<!-- JS 依赖 -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 
 </body>
 </html>
